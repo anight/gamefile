@@ -3,22 +3,24 @@ let ctx;
 let canvasWidth;
 let canvasHeight;
 let keys = [];
+let ship;
 
 document.addEventListener('DOMContentLoaded', SetUpCanvas);
 
 function SetUpCanvas(){
   canvas = document.getElementById('myCanvas');
   ctx = canvas.getContext('2d');
-  canvas.width = canvasWidth;
-  canvas.height = canvasHeight;
+  canvasWidth = canvas.width;
+  canvasHeight = canvas.height;
   ctx.fillStyle = 'blue';
-  ctx.fillStyle(0,0, canvas.width, canvas.height);
+  ctx.fillRect(0,0, canvas.width, canvas.height);
   document.body.addEventListener("keydown", function(e){
-    keys[e.keycode] = true;
+    keys[e.code] = true;
   });
   document.body.addEventListener("keyup", function(e){
-    keys[e.keycode] = false;
+    keys[e.code] = false;
   });
+  ship = new Ship();
   Render();
 }
 
@@ -34,7 +36,7 @@ class Ship{
     this.rotateSpeed = 0.001;
     this.radius = 15;
     this.angle = 0;
-    this.strokeColor = 'blue';
+    this.strokeColor = 'yellow';
   }
   Rotate(dir){
     this.angle += this.rotateSpeed * dir;
@@ -70,25 +72,24 @@ class Ship{
     let vertAngle = ((Math.PI * 2) / 3);
     let radians = this.angle / Math.PI * 180;
     for(let i = 0; i < 3; i ++){
-      ctx.lineTo(this.x - this.radius * Math.cos(vartAngle * i + radians),
-      this.x - this.radius * Math.sin(vartAngle * i + radians ));
+      ctx.lineTo(this.x - this.radius * Math.cos(vertAngle * i + radians),
+      this.x - this.radius * Math.sin(vertAngle * i + radians ));
     }
     ctx.closePath();
     ctx.stroke();
   }
 }
 
-let ship = new Ship();
-
 function Render(){
-  ship.movingForward = (keys[87]);
-  if(keys[68]){
+  ship.movingForward = (keys['KeyW']);
+  if(keys['KeyD']){
     ship.Rotate(1);
   }
-  if(keys[65]){
+  if(keys['KeyA']){
     ship.Rotate(-1);
   }
-  ctx.clearRect(0,0,canvasWidth, canvasHeight);
+  ctx.fillStyle = 'blue';
+  ctx.fillRect(0,0, canvas.width, canvas.height);
   ship.Update();
   ship.Draw();
   requestAnimationFrame(Render);
