@@ -1,0 +1,14 @@
+body{
+  background: #000000;
+  cursor: crosshair;
+}
+
+#container{
+  max-width: 1400px;
+  margin: auto;
+}
+
+#myCanvas{
+  background: #000000;
+  border: 2px solid #FFFFFF;
+}
