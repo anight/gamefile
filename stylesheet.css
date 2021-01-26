@@ -1,14 +1,59 @@
 body{
   background: #000000;
   cursor: crosshair;
+  color: #ffffff;
+  font-family: "Lucida Console", "Courier New", monospace;
 }
 
 #container{
-  max-width: 1400px;
-  margin: auto;
+  max-width: 1300px;
+  margin-left: auto;
 }
 
 #myCanvas{
   background: #000000;
   border: 2px solid #FFFFFF;
+}
+
+h2{
+  color: #fff;
+  font-size: 16px;
+  position: absolute;
+  margin-top: 5;
+  margin-left: 10;
+}
+
+a {
+  color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+}
+a#tweet {
+  color: white;
+  font-size: 11px;
+  /*display: inline-block;*/
+  margin-top: 15px;
+  /*padding: 5px 10px;*/
+  background-color: transparent;
+}
+
+a:hover {
+  color:rgb(0, 81, 255);
+}
+#start {
+  font-size: 25px;
+  font-weight: 300;
+}
+
+#message {
+  margin-bottom: 30px;
+  position: absolute;
+  top: 50%;
+  margin-top: -45px;
+  text-align: center;
+  width: 70%;
+}
+
+p{
+  font-size: 16px;
 }
