@@ -6,9 +6,12 @@ let keys = [];
 let ship;
 let asteroids = [];
 let coins = [];
-let bounding = true;
+let detection = true;
+let myScore = 0;
+//let start = Date.now(); //remember start time
 
 document.addEventListener('DOMContentLoaded', SetUpCanvas);
+//setInterval(Animate, 3000 / 10);
 
 function SetUpCanvas(){ //setting up canvas
   canvas = document.getElementById('myCanvas');
@@ -26,7 +29,7 @@ function SetUpCanvas(){ //setting up canvas
     keys[e.code] = false;
   });
   ship = new Ship(); //create new ship (triangle)
-  
+
   for (let j = 0; j < 8; j ++){
     asteroids.push(new Asteroid());
   }
@@ -36,6 +39,15 @@ function SetUpCanvas(){ //setting up canvas
   }
   Render();
 }
+
+//let timer = setInterval (function(){
+  //let timePassed = Date.now() - start;
+
+  //if (timePassed >= 2000){
+  //  clearInterval(timer);
+  //  console.log("haha");
+  //}
+//}, 20);
 
 class Ship{ //attributes of ship
   constructor(){
@@ -79,15 +91,23 @@ class Ship{ //attributes of ship
     this.velX *= 0.99;
     this.velY *= 0.99;
 
-    //this.x -= this.velX;  //dont add this back!!
+    //this.x -= this.velX; 
     this.y -= this.velY;
 
-    if (bounding){
+    //var distance = Math.sqrt((asteroids.x * ship.x) + (asteroids.y * ship.y));
+
+    if (detection){
       ctx.strokeStyle = "red";
       ctx.beginPath();
       ctx.arc(ship.x, ship.y, ship.radius, 0, Math.PI * 2, false);
       ctx.stroke();
     }
+
+    //for (let j = 0; j < asteroids.length; j++){
+     // if ( < ship.radius + asteroids[j].radius){
+     //   alert("oops");
+      //}
+    //}
   }
   
   Draw(){ //drawing the triangle ship
@@ -134,10 +154,10 @@ class Asteroid{ //creating asteroids that float past
     if(this.y > canvas.height){
       this.y = this.radius;
     }
-    if(bounding){
-      ctx.strokeStyle = "orange";
+    if(detection){
+      ctx.strokeStyle = "red";
       ctx.beginPath();
-      ctx.arc(asteroids.x, asteroids.y, asteroids.radius, 0, 2 * Math.PI, false);
+      ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
       ctx.stroke();
     }
   }
@@ -182,7 +202,12 @@ class Coin{ //creating bonus coins to boost score that float around
     if(this.y > canvas.height){
       this.y = this.radius;
     }
-    //coins.strokeColor = this.strokeColor;
+    if(detection){
+      ctx.strokeStyle = "green";
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
+      ctx.stroke();
+    }
   }
   Draw(){
     ctx.beginPath();
@@ -196,12 +221,38 @@ class Coin{ //creating bonus coins to boost score that float around
     ctx.stroke();
   }
 }
-function collisionDetection() {
-  if (ship.x < asteroids.x + asteroids.width  && ship.x + ship.width  > asteroids.x &&
-		ship.y < asteroids.y + asteroids.height && ship.y + ship.height > asteroids.y) {
-      alert('detected');
-  } 
+
+function drawScore(){
+  ctx.font = "18px monospace";
+  ctx.fillStyle = "#FFFFFF";
+  ctx.fillText("Score: " + myScore, 8, 20);
 }
+
+function collisionDetection() {
+  for(var i = 0; i < ship.length; i++) {
+      for(var j = 0; j < asteroids.length; j++) {
+          var a = objects[i][j];
+          if(a.status == 1) {
+              if(x > a.x && x < a.x+ ship.radius && y > a.y && y < a.y+ asteroids.radius) {
+                  dy = -dy;
+                  a.status = 0;
+                  //myScore++;
+                  console.log("hello");
+              }
+          }
+      }
+  }
+}
+
+//let dx = ship.x - asteroids.x;
+//let dy = ship.y - asteroids.y;
+//let sumR = ship.radius + asteroids.radius;
+
+//function collisionDetection(ship, asteroids){
+ // if ((dx * dx + dy * dy <= sumR * sumR)) {
+ //   alert("Collision Detected");
+ // }
+//}
 
 function Render(){ //Up, Left, Right keys are used to move ship around
   ship.movingForward = (keys['ArrowUp']);
@@ -227,7 +278,11 @@ function Render(){ //Up, Left, Right keys are used to move ship around
       coins[k].Update();
       coins[k].Draw();
     }
-
   }
+  drawScore();
+
+  //if ( Math.sqrt((asteroids.x - ship.x) * (asteroids.x - ship.x)  + (asteroids.y - ship.y) * (asteroids.y - ship.y) ) < (ship.radiius + asteroids.radius)){
+   // alert("collision works");
+  //}
   requestAnimationFrame(Render);
 }
