@@ -6,7 +6,7 @@ let keys = [];
 let ship;
 let asteroids = [];
 let coins = [];
-let detection = true;
+let detection = false;
 let myScore = 0;
 //let start = Date.now(); //remember start time
 
@@ -109,7 +109,10 @@ class Ship{ //attributes of ship
       //}
     //}
   }
-  
+  CheckCollision(x, y, r) {
+    let distance = Math.sqrt((x - this.x) * (x - this.x) + (y - this.y) * (y - this.y));
+    return distance < r + this.radius;
+  }
   Draw(){ //drawing the triangle ship
     ctx.strokeStyle = this.strokeColor;
     ctx.beginPath();
@@ -161,6 +164,9 @@ class Asteroid{ //creating asteroids that float past
       ctx.stroke();
     }
   }
+  CheckCollisionWithShip() {
+    return ship.CheckCollision(this.x, this.y, this.radius);
+  }
   Draw(){
     ctx.beginPath();
     let vertAngle = ((Math.PI * 2) / 7);
@@ -209,6 +215,9 @@ class Coin{ //creating bonus coins to boost score that float around
       ctx.stroke();
     }
   }
+  CheckCollisionWithShip() {
+    return ship.CheckCollision(this.x, this.y, this.radius);
+  }
   Draw(){
     ctx.beginPath();
     let vertAngle = ((Math.PI * 2) / 4);
@@ -255,6 +264,9 @@ function collisionDetection() {
 //}
 
 function Render(){ //Up, Left, Right keys are used to move ship around
+
+  // first step - update all object coordinates
+
   ship.movingForward = (keys['ArrowUp']);
   if(keys['ArrowRight']){
     ship.Rotate(1); 
@@ -263,21 +275,38 @@ function Render(){ //Up, Left, Right keys are used to move ship around
   if(keys['ArrowLeft']){
     ship.Rotate(-1);
   }
-  ctx.fillStyle = 'black'; 
-  ctx.fillRect(0,0, canvas.width, canvas.height);
   ship.Update();
-  ship.Draw();
-  if (asteroids.length !==0){
-    for(let j = 0; j < asteroids.length; j++){
-      asteroids[j].Update();
-      asteroids[j].Draw();
+
+  for(let j = 0; j < asteroids.length; j++){
+    asteroids[j].Update();
+    if (asteroids[j].CheckCollisionWithShip()) {
+      console.log("game end: boom");
     }
   }
-  if (coins.length !==0){
-    for(let k = 0; k < coins.length; k++){
-      coins[k].Update();
-      coins[k].Draw();
+
+  for(let k = 0; k < coins.length; ){
+    coins[k].Update();
+    if (coins[k].CheckCollisionWithShip()) {
+      myScore ++;
+      coins.splice(k, 1);
+      if (coins.length == 0) {
+        console.log("game end: victory")
+      }
+    } else {
+      k ++;
     }
+  }
+
+  // last step - draw everything
+
+  ctx.fillStyle = 'black';
+  ctx.fillRect(0,0, canvas.width, canvas.height);
+  ship.Draw();
+  for(let j = 0; j < asteroids.length; j++){
+    asteroids[j].Draw();
+  }
+  for(let k = 0; k < coins.length; k++){
+    coins[k].Draw();
   }
   drawScore();
 
